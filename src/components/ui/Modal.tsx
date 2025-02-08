@@ -14,9 +14,18 @@ const Modal = ({ isOpen, close, title, children }: IProps) => {
     useEffect(() => {
         if (isOpen) {
             document.body.classList.add("overflow-hidden");
+
+            setTimeout(() => {
+                const firstInput = document.querySelector<HTMLInputElement>('input');
+                if (firstInput) {
+                    firstInput.focus();
+                }
+            }, 100); 
+            
         } else {
             document.body.classList.remove("overflow-hidden");
         }
+
         return () => document.body.classList.remove("overflow-hidden");
     }, [isOpen]);
 
