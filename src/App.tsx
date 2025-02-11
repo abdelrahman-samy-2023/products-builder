@@ -34,12 +34,13 @@ const App = () => {
       [name]: value,
     })
   };
-  const submitHandler = (event: FormEvent<HTMLFormElement>): void => {
-    event.preventDefault();
-  }
   const onCancel = () => {
     setProduct(defaultProductObject);
     close();
+  }
+  
+  const submitHandler = (event: FormEvent<HTMLFormElement>): void => {
+    event.preventDefault();
   }
 
   /* _____________ RENDER _____________ */
