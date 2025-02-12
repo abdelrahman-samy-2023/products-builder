@@ -5,6 +5,7 @@ import { formInputsList, productList } from "./data"
 import Button from "./components/ui/Button";
 import Input from "./components/ui/Input";
 import { IProduct } from "./interfaces";
+import { productValidation } from "./validation";
 
 const App = () => {
   const defaultProductObject = {
@@ -41,6 +42,8 @@ const App = () => {
   
   const submitHandler = (event: FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
+    const errors= productValidation({ title: product.title, description: product.description, price: product.price, imageURL: product.imageURL });
+    console.log(errors);
   }
 
   /* _____________ RENDER _____________ */
