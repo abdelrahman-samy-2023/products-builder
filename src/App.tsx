@@ -6,6 +6,7 @@ import Button from "./components/ui/Button";
 import Input from "./components/ui/Input";
 import { IProduct } from "./interfaces";
 import { productValidation } from "./validation";
+import ErrorMessage from "./components/ErrorMessage";
 
 const App = () => {
   const defaultProductObject = {
@@ -21,8 +22,8 @@ const App = () => {
   }
   /* _____________ STATE _____________ */
   const [product, setProduct] = useState<IProduct>(defaultProductObject);
+  const [errors, setErrors] = useState({ title: "", description: "", imageURL: "", price: "" });
   const [isOpen, setIsOpen] = useState(false);
-
 
   /* _____________ HANDLER _____________ */
   const open = () => setIsOpen(true);
@@ -34,6 +35,10 @@ const App = () => {
       ...product,
       [name]: value,
     })
+    setErrors({
+      ...errors,
+      [name]: "",
+    });
   };
   const onCancel = () => {
     setProduct(defaultProductObject);
@@ -42,8 +47,16 @@ const App = () => {
   
   const submitHandler = (event: FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
-    const errors= productValidation({ title: product.title, description: product.description, price: product.price, imageURL: product.imageURL });
-    console.log(errors);
+    const { title, description, price, imageURL } = product;
+    const errors= productValidation({ title, description, price, imageURL });
+
+    const hasErrorMsg =
+      Object.values(errors).some(value => value === "") && Object.values(errors).every(value => value === "");
+
+    if (!hasErrorMsg) {
+      setErrors(errors);
+      return;
+    }
   }
 
   /* _____________ RENDER _____________ */
@@ -52,6 +65,7 @@ const App = () => {
     <div className="flex flex-col" key={input.id}>
       <label htmlFor={input.id} className="mb-[1px] text-sm font-medium text-gray-700">{input.label}</label>
       <Input type="text" id={input.id} name={input.name} value={product[input.name]} onChange={onChangeHandler}/>
+      <ErrorMessage msg={errors[input.name]} />
     </div>
   ));
 
