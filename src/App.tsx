@@ -1,12 +1,13 @@
 import { ChangeEvent, FormEvent, useState } from "react"
 import ProductCard from "./components/ProductCard"
 import Modal from "./components/ui/Modal"
-import { formInputsList, productList } from "./data"
+import { colors, formInputsList, productList } from "./data"
 import Button from "./components/ui/Button";
 import Input from "./components/ui/Input";
 import { IProduct } from "./interfaces";
 import { productValidation } from "./validation";
 import ErrorMessage from "./components/ErrorMessage";
+import CircleColor from "./components/CircleColor";
 
 const App = () => {
   const defaultProductObject = {
@@ -23,6 +24,7 @@ const App = () => {
   /* _____________ STATE _____________ */
   const [product, setProduct] = useState<IProduct>(defaultProductObject);
   const [errors, setErrors] = useState({ title: "", description: "", imageURL: "", price: "" });
+  const [tempColors, setTempColor] = useState<string[]>([]);
   const [isOpen, setIsOpen] = useState(false);
 
   /* _____________ HANDLER _____________ */
@@ -68,6 +70,19 @@ const App = () => {
       <ErrorMessage msg={errors[input.name]} />
     </div>
   ));
+  const renderProductColors = colors.map(color => (
+    <CircleColor
+      key={color}
+      color={color}
+      onClick={() => {
+        if (tempColors.includes(color)) {
+          setTempColor(prev => prev.filter(item => item !== color));
+          return;
+        }
+        setTempColor(prev => [...prev, color]);
+      }}
+    />
+  ));
 
   return (
     <main className="container mx-auto">
@@ -80,6 +95,21 @@ const App = () => {
       <Modal isOpen={isOpen} close={close} title="ADD A NEW PRODUCT">
         <form className="space-y-3" onSubmit={submitHandler}>
           {renderFormInputList}
+          <div className="flex items-center flex-wrap space-x-1">
+            {renderProductColors}
+          </div>
+          <div className="flex items-center flex-wrap space-x-1">
+            {tempColors.map(color => (
+              <span
+                key={color}
+                className="p-1 mr-1 mb-1 text-xs rounded-md text-white"
+                style={{ backgroundColor: color }}
+              >
+                {color}
+              </span>
+            ))}
+          </div>
+
           <div className="flex items-center space-x-3">
             <Button className="bg-indigo-700 transition duration-300 hover:bg-indigo-800" >
               Submit
