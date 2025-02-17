@@ -8,6 +8,7 @@ import { IProduct } from "./interfaces";
 import { productValidation } from "./validation";
 import ErrorMessage from "./components/ErrorMessage";
 import CircleColor from "./components/CircleColor";
+import { v4 as uuid } from "uuid";
 
 const App = () => {
   const defaultProductObject = {
@@ -22,6 +23,7 @@ const App = () => {
     }
   }
   /* _____________ STATE _____________ */
+  const [products, setProducts] = useState<IProduct[]>(productList);
   const [product, setProduct] = useState<IProduct>(defaultProductObject);
   const [errors, setErrors] = useState({ title: "", description: "", imageURL: "", price: "" });
   const [tempColors, setTempColor] = useState<string[]>([]);
@@ -59,10 +61,15 @@ const App = () => {
       setErrors(errors);
       return;
     }
+
+    setProducts(prev => [{ ...product, id: uuid(), colors: tempColors }, ...prev]);
+    setProduct(defaultProductObject);
+    setTempColor([]);
+    close();
   }
 
   /* _____________ RENDER _____________ */
-  const renderProductList = productList.map(product => <ProductCard key={product.id} product={product} />)
+  const renderProductList = products.map(product => <ProductCard key={product.id} product={product} />)
   const renderFormInputList = formInputsList.map(input => (
     <div className="flex flex-col" key={input.id}>
       <label htmlFor={input.id} className="mb-[1px] text-sm font-medium text-gray-700">{input.label}</label>
@@ -86,9 +93,20 @@ const App = () => {
 
   return (
     <main className="container mx-auto">
-      <Button className="bg-indigo-700 transition duration-300 hover:bg-indigo-800 my-5" onClick={open}>
-        Add
-      </Button>
+      <div className="flex flex-col md:flex-row items-center justify-between p-5 m-5 bg-white rounded-lg border border-gray-200 space-y-3">
+          <h1 className="text-2xl md:text-3xl font-semibold text-gray-800">Create and Manage Products</h1>
+          <Button 
+              className="bg-indigo-700 transition duration-300 hover:bg-indigo-800 text-white font-semibold py-2 px-4 rounded-md focus:outline-none flex items-center space-x-2"
+              width="w-fit" 
+              onClick={open}
+          >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+              </svg>
+              <span>Add New Product</span>
+          </Button>
+      </div>
+
       <div className=" m-3 md:m-4 lg:m-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 md:gap-4 rounded-md">
         {renderProductList}
       </div>
