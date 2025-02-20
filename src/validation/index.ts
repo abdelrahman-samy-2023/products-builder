@@ -1,7 +1,7 @@
 /**
  * Validates a product object to ensure all fields meet the required conditions.
  *
- * @param {Product} product - The product object containing title, description, imageURL, and price.
+ * @param {Product} product - The product object containing title, description, imageURL, price, and colors.
  * @returns {ProductErrors} - An object containing validation error messages for each invalid field.
  */
 
@@ -10,6 +10,7 @@ interface Product {
     description: string;
     imageURL: string;
     price: string;
+    colors: string[];
 }
 
 interface ProductErrors {
@@ -17,6 +18,7 @@ interface ProductErrors {
     description: string;
     imageURL: string;
     price: string;
+    colors: string;
 }
 
 // Regular expression for URL validation (placed outside to avoid redefining it)
@@ -27,7 +29,8 @@ export const productValidation = (product: Product): ProductErrors => {
         title: '',
         description: '',
         imageURL: '',
-        price: ''
+        price: '',
+        colors: ''
     };
 
     // Validate title
@@ -48,6 +51,11 @@ export const productValidation = (product: Product): ProductErrors => {
     // Validate price
     if (!product.price.trim() || isNaN(Number(product.price)) || Number(product.price) <= 0) {
         errors.price = "Price must be a valid number greater than 0.";
+    }
+
+    // Validate colors
+    if (product.colors.length === 0) {
+        errors.colors = "At least one color must be selected.";
     }
 
     return errors;
